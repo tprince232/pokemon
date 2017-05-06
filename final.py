@@ -1,5 +1,7 @@
 import pygame, math, sys
 from pygame.locals import *
+from twisted.python import log
+from connections import *
 
 class Player(pygame.sprite.Sprite):
 
@@ -23,13 +25,17 @@ class Player(pygame.sprite.Sprite):
 #step 1: initializing GameSpace
 class GameSpace:
 
-    def main(self):
+    def main(self, playerNum):
+        initializePlayers(playerNum)
         pygame.init()
         self.size = self.width, self.height = 600, 600
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
+        #connect players
+        
+        
 #step 2: initialize game objects
         self.player = Player(self)
         self.clock = pygame.time.Clock()
@@ -77,6 +83,30 @@ class GameSpace:
             pygame.display.flip()
 
 #later as part of step 1
+
+
+def usage(args):
+    print 'Run "' + args[0] + ' 1" if you are player 1.'
+    print 'Run "' + args[0] + ' 2" if you are player 2.'
+    sys.exit()
+
+                
+
 if __name__=='__main__':
+    log.startLogging(sys.stdout)
     gs = GameSpace()
-    gs.main()
+
+    if len(sys.argv) != 2:
+        print "Invalid number of command line arguments."
+        usage(sys.argv)
+
+    elif sys.argv[1] != "1":
+        if sys.argv[1] != "2":
+            print "Invalid player number."
+            usage(sys.argv)
+
+    playerNum = int(sys.argv[1])
+    gs.main(playerNum)
+  
+  
+  
