@@ -67,7 +67,7 @@ class Player2(pygame.sprite.Sprite):
 class GameSpace:
 
     def main(self, playerNum):
-        initializePlayers(playerNum)
+        #initializePlayers(playerNum)
         pygame.init()
         self.size = self.width, self.height = 650, 500
         self.black = 0,0,0
@@ -150,7 +150,7 @@ def usage(args):
 if __name__=='__main__':
     log.startLogging(sys.stdout)
     gs = GameSpace()
-
+    
     if len(sys.argv) != 2:
         print "Invalid number of command line arguments."
         usage(sys.argv)
@@ -161,7 +161,8 @@ if __name__=='__main__':
             usage(sys.argv)
 
     playerNum = int(sys.argv[1])
-    gs.main(playerNum)
+    initializePlayers(playerNum, gs)
+    #gs.main(playerNum)
   
   
   
