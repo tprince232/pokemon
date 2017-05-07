@@ -2,7 +2,6 @@ import pygame, math, sys
 from pygame.locals import *
 from connections import *
 
-
 class OptionBox(pygame.sprite.Sprite):
 
     def __init__(self, GameSpace):
@@ -34,15 +33,15 @@ class OptionBox(pygame.sprite.Sprite):
 
 class Player1(pygame.sprite.Sprite):
 
-    def __init__(self, GameSpace):
+    def __init__(self, GameSpace, playerNum):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
         #GENERATE POKEMON
-        if sys.argv[1] == 1:
+        if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
             self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
-        if sys.argv[1] == 2:
+        if playerNum == 2:
             self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
             self.original = pygame.image.load("./pokeDex/Charzard.png")
         self.rect = self.pokemon.get_rect()
@@ -57,15 +56,15 @@ class Player1(pygame.sprite.Sprite):
 
 class Player2(pygame.sprite.Sprite):
 
-    def __init__(self, GameSpace):
+    def __init__(self, GameSpace, playerNum):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
         #GENERATE POKEMON
-        if sys.argv[1] == 1:
+        if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
             self.original = pygame.image.load("./pokeDex/Charzard.png")
-        if sys.argv[1] == 2:
+        if playerNum == 2:
             self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
             self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
         self.rect = self.pokemon.get_rect()
