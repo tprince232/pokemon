@@ -1,6 +1,5 @@
 import pygame, math, sys
 from pygame.locals import *
-from twisted.python import log
 from connections import *
 
 class OptionBox(pygame.sprite.Sprite):
@@ -9,10 +8,14 @@ class OptionBox(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
-        #GENERATE GLOBE
+        self.scene = pygame.image.load("battlegrass.png")
+        self.rectScene = self.scene.get_rect()
+        self.rectScene = self.rectScene.move(0,0)
+
+        #GENERATE OPTION BOX
         self.box = pygame.image.load("optionBox.png")
         self.rect = self.box.get_rect()
-        self.rect = self.rect.move(345,320)
+        self.rect = self.rect.move(345,220)
 
     def writeText(self, size, text, w, h):
 #Create OptionBox FONT (fight)
@@ -30,7 +33,7 @@ class Player1(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
-        #GENERATE DEATH STAR
+        #GENERATE POKEMON
         self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
         self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
         self.rect = self.pokemon.get_rect()
@@ -49,12 +52,12 @@ class Player2(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
-        #GENERATE DEATH STAR
+        #GENERATE POKEMON
         self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
         self.original = pygame.image.load("./pokeDex/Charzard.png")
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
-        self.rect = self.rect.move(125,275)
+        self.rect = self.rect.move(125,225)
 
     def move(self):
         self.rect.move_ip(self.speed)
@@ -68,15 +71,14 @@ class GameSpace:
 
     def main(self, playerNum):
         #initializePlayers(playerNum)
+        
         pygame.init()
-        self.size = self.width, self.height = 650, 500
+        self.size = self.width, self.height = 650, 400
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        #connect players
-        
-        
+
 #step 2: initialize game objects
         self.player1 = Player1(self)
         self.player2 = Player2(self)
@@ -125,30 +127,20 @@ class GameSpace:
 
 #step 7: update the screen
             self.screen.fill(self.black)
-
+            self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
             self.screen.blit(self.player1.pokemon, self.player1.rect)
             self.screen.blit(self.player2.pokemon, self.player2.rect)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
 
-            self.optionBox.writeText(30, "FIGHT", 375, 350)
-            self.optionBox.writeText(30, "POKeMON", 375, 390)
-            self.optionBox.writeText(30, "RUN", 375, 430)
+            self.optionBox.writeText(30, "FIGHT", 375, 250)
+            self.optionBox.writeText(30, "POKeMON", 375, 290)
+            self.optionBox.writeText(30, "RUN", 375, 330)
 
 
             pygame.display.flip()
 
 #later as part of step 1
-
-
-def usage(args):
-    print 'Run "' + args[0] + ' 1" if you are player 1.'
-    print 'Run "' + args[0] + ' 2" if you are player 2.'
-    sys.exit()
-
-                
-
 if __name__=='__main__':
-    log.startLogging(sys.stdout)
     gs = GameSpace()
     
     if len(sys.argv) != 2:
@@ -162,7 +154,5 @@ if __name__=='__main__':
 
     playerNum = int(sys.argv[1])
     initializePlayers(playerNum, gs)
-    #gs.main(playerNum)
-  
-  
-  
+    #gs.main()
+

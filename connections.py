@@ -55,7 +55,7 @@ def initializePlayers(playerNum, gs):
     if playerNum == 1:
         print "Detected player 1."
         factory = Player1Factory(gs)
-        reactor.listenTCP(40050, factory)
+        reactor.listenTCP(44050, factory)
         reactor.run()
         #'''conn = factory.player1Conn
         #while conn.connected == 0:
@@ -66,7 +66,7 @@ def initializePlayers(playerNum, gs):
     elif playerNum == 2:
         #try:
         factory = Player2Factory(gs)
-        reactor.connectTCP("ash.campus.nd.edu", 40050, factory)
+        reactor.connectTCP("ash.campus.nd.edu", 44050, factory)
         reactor.run()
         #except:
         #    print "Connection to player 1 failed."
