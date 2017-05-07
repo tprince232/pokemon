@@ -8,6 +8,10 @@ class OptionBox(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
+        self.grass = pygame.image.load("grassLand.png")
+        self.rectGrass = self.grass.get_rect()
+        self.rectGrass = self.rectGrass.move(0,0)
+
         self.scene = pygame.image.load("battlegrass.png")
         self.rectScene = self.scene.get_rect()
         self.rectScene = self.rectScene.move(0,0)
@@ -57,7 +61,7 @@ class Player2(pygame.sprite.Sprite):
         self.original = pygame.image.load("./pokeDex/Charzard.png")
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
-        self.rect = self.rect.move(125,225)
+        self.rect = self.rect.move(105,185)
 
     def move(self):
         self.rect.move_ip(self.speed)
@@ -127,6 +131,7 @@ class GameSpace:
 
 #step 7: update the screen
             self.screen.fill(self.black)
+            self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
             self.screen.blit(self.player1.pokemon, self.player1.rect)
             self.screen.blit(self.player2.pokemon, self.player2.rect)
