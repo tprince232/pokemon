@@ -92,8 +92,8 @@ class GameSpace:
 
 
 #step 2: initialize game objects
-        self.player1 = Player1(self)
-        self.player2 = Player2(self)
+        self.player1 = Player1(self, playerNum)
+        self.player2 = Player2(self,playerNum)
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
 

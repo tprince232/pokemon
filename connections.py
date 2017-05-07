@@ -8,13 +8,13 @@ import sys
 class Player1Connection(Protocol):
     def __init__(self, gs):
         self.connected = 0
-        self.gs = GameSpace(1)
-        
+        self.gs = GameSpace()
+
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
         self.gs.main(1)
-        
+
     def dataReceived(self, data):
         pass
 
@@ -22,7 +22,7 @@ class Player1Connection(Protocol):
 class Player1Factory(Factory):
     def __init__(self, gs):
         self.player1Conn = Player1Connection(gs)
-        
+
     def buildProtocol(self, addr):
         return self.player1Conn
 
@@ -31,13 +31,13 @@ class Player1Factory(Factory):
 class Player2Connection(Protocol):
     def __init__(self, gs):
         self.connected = 0
-        self.gs = GameSpace(2)
-        
+        self.gs = GameSpace()
+
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
         self.gs.main(2)
-        
+
     def dataReceived(self, data):
         pass
 
@@ -45,7 +45,7 @@ class Player2Connection(Protocol):
 class Player2Factory(ClientFactory):
     def __init__(self, gs):
         self.player2Conn = Player2Connection(gs)
-        
+
     def buildProtocol(self, addr):
         return self.player2Conn
 
