@@ -57,24 +57,9 @@ def initializePlayers(playerNum, gs):
         factory = Player1Factory(gs)
         reactor.listenTCP(44050, factory)
         reactor.run()
-        #'''conn = factory.player1Conn
-        #while conn.connected == 0:
-        #    conn = factory.player1Conn
-        #    
-        #return conn'''
 
     elif playerNum == 2:
         #try:
         factory = Player2Factory(gs)
         reactor.connectTCP("ash.campus.nd.edu", 44050, factory)
         reactor.run()
-        #except:
-        #    print "Connection to player 1 failed."
-        #    print "Be sure to run player 1 first."
-        #    sys.exit()
-        #conn = factory.player2Conn
-        #while conn.connected == 0:
-        #    print conn.connected
-        #    conn = factory.player2Conn
-            
-        #return conn'''

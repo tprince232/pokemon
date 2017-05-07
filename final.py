@@ -144,6 +144,9 @@ class GameSpace:
 
             pygame.display.flip()
 
+
+
+            
 #later as part of step 1
 if __name__=='__main__':
     gs = GameSpace()
