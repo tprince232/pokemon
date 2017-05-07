@@ -42,8 +42,8 @@ class Player1(pygame.sprite.Sprite):
             self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
             self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
         if playerNum == 2:
-            self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
-            self.original = pygame.image.load("./pokeDex/Charzard.png")
+            self.pokemon = pygame.image.load("./pokeDex/CharzardLeft.png")
+            self.original = pygame.image.load("./pokeDex/CharzardLeft.png")
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
         self.rect = self.rect.move(450,75)
@@ -62,8 +62,8 @@ class Player2(pygame.sprite.Sprite):
 
         #GENERATE POKEMON
         if playerNum == 1:
-            self.pokemon = pygame.image.load("./pokeDex/CharzardLeft.png")
-            self.original = pygame.image.load("./pokeDex/CharzardLeft.png")
+            self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
+            self.original = pygame.image.load("./pokeDex/Charzard.png")
         if playerNum == 2:
             self.pokemon = pygame.image.load("./pokeDex/BulbasaurRight.png")
             self.original = pygame.image.load("./pokeDex/BulbasaurRight.png")
