@@ -38,8 +38,12 @@ class Player1(pygame.sprite.Sprite):
         self.gamespace = GameSpace
 
         #GENERATE POKEMON
-        self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
-        self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
+        if sys.argv[1] == 1:
+            self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
+            self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
+        if sys.argv[1] == 2:
+            self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
+            self.original = pygame.image.load("./pokeDex/Charzard.png")
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
         self.rect = self.rect.move(450,75)
@@ -57,8 +61,12 @@ class Player2(pygame.sprite.Sprite):
         self.gamespace = GameSpace
 
         #GENERATE POKEMON
-        self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
-        self.original = pygame.image.load("./pokeDex/Charzard.png")
+        if sys.argv[1] == 1:
+            self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
+            self.original = pygame.image.load("./pokeDex/Charzard.png")
+        if sys.argv[1] == 2:
+            self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
+            self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
         self.rect = self.rect.move(105,185)
@@ -75,7 +83,7 @@ class GameSpace:
 
     def main(self, playerNum):
         #initializePlayers(playerNum)
-        
+
         pygame.init()
         self.size = self.width, self.height = 650, 400
         self.black = 0,0,0
@@ -150,7 +158,7 @@ class GameSpace:
 #later as part of step 1
 if __name__=='__main__':
     gs = GameSpace()
-    
+
     if len(sys.argv) != 2:
         print "Invalid number of command line arguments."
         usage(sys.argv)
@@ -163,4 +171,3 @@ if __name__=='__main__':
     playerNum = int(sys.argv[1])
     initializePlayers(playerNum, gs)
     #gs.main()
-
