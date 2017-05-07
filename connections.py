@@ -8,7 +8,7 @@ import sys
 class Player1Connection(Protocol):
     def __init__(self, gs):
         self.connected = 0
-        self.gs = GameSpace()
+        self.gs = GameSpace(1)
         
     def connectionMade(self):
         print "Connection made."
@@ -31,7 +31,7 @@ class Player1Factory(Factory):
 class Player2Connection(Protocol):
     def __init__(self, gs):
         self.connected = 0
-        self.gs = GameSpace()
+        self.gs = GameSpace(2)
         
     def connectionMade(self):
         print "Connection made."
@@ -53,13 +53,11 @@ class Player2Factory(ClientFactory):
 def initializePlayers(playerNum, gs):
     print "Detected player num:", playerNum
     if playerNum == 1:
-        print "Detected player 1."
         factory = Player1Factory(gs)
         reactor.listenTCP(44050, factory)
         reactor.run()
 
     elif playerNum == 2:
-        #try:
         factory = Player2Factory(gs)
         reactor.connectTCP("ash.campus.nd.edu", 44050, factory)
         reactor.run()
