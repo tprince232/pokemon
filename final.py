@@ -2,6 +2,7 @@ import pygame, math, sys
 from pygame.locals import *
 from connections import *
 
+
 class OptionBox(pygame.sprite.Sprite):
 
     def __init__(self, GameSpace):
@@ -152,9 +153,6 @@ class GameSpace:
 
             pygame.display.flip()
 
-
-
-            
 #later as part of step 1
 if __name__=='__main__':
     gs = GameSpace()
