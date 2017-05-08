@@ -2,62 +2,78 @@ from twisted.internet.protocol import Factory
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
-from final import *
+#from final import *
 import sys
 
 class Player1Connection(Protocol):
-    def __init__(self, gs):
+    def __init__(self, gs, playerPoke):
         self.connected = 0
-        self.gs = GameSpace()
-
+        #self.gs = GameSpace()
+        self.poke = playerPoke;
+        self.inp = ""
+        
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
-        self.gs.main(1, self)
+
+        #self.gs.main(1, self)
 
     def dataReceived(self, data):
-        pass
+        self.imp = data
 
 
 class Player1Factory(Factory):
-    def __init__(self, gs):
-        self.player1Conn = Player1Connection(gs)
+    def __init__(self, gs, playerPoke):
+        self.playerConn = PlayerConnection(gs, playerPoke)
 
     def buildProtocol(self, addr):
-        return self.player1Conn
+        return self.playerConn
 
 
-
-class Player2Connection(Protocol):
-    def __init__(self, gs):
+    
+class PlayerConnection(Protocol):
+    def __init__(self, playerPoke, pNum):
         self.connected = 0
-        self.gs = GameSpace()
-
+        #self.gs = GameSpace()
+        self.poke = playerPoke
+        self.pNum = pNum
+        self.inp = ""
+        
+        
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
-        self.gs.main(2, self)
+        print "before launch"
+        #self.gs.main(self.pNum, self)
+        print "after launch"
+        if self.pNum == 2:
+            self.transport.write("test connection from p2")
 
     def dataReceived(self, data):
-        pass
+        print "Got data:", data
+        if data == "getPoke":
+            self.transport.write(self.poke)
+        else:
+            self.inp = data
 
 
-class Player2Factory(ClientFactory):
-    def __init__(self, gs):
-        self.player2Conn = Player2Connection(gs)
+class PlayerFactory(ClientFactory):
+    def __init__(self, playerPoke, pNum):
+        self.playerConn = PlayerConnection(playerPoke, pNum)
 
     def buildProtocol(self, addr):
-        return self.player2Conn
+        return self.playerConn
 
 
-def initializePlayers(playerNum, gs):
+def initializePlayers(playerPoke, playerNum):
     print "Detected player num:", playerNum
+    port = 45050
     if playerNum == 1:
-        factory = Player1Factory(gs)
-        reactor.listenTCP(44050, factory)
+        factory = PlayerFactory(playerPoke, 1)
+        reactor.listenTCP(port, factory)
         reactor.run()
 
     elif playerNum == 2:
-        factory = Player2Factory(gs)
-        reactor.connectTCP("ash.campus.nd.edu", 44050, factory)
+        factory = PlayerFactory(playerPoke, 2)
+        reactor.connectTCP("ash.campus.nd.edu", port, factory)
         reactor.run()

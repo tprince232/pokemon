@@ -2,6 +2,9 @@ import pygame, math, sys
 from pygame.locals import *
 from connections import *
 from animations import *
+from twisted.python import log
+from twisted.internet.task import LoopingCall
+
 
 class OptionBox(pygame.sprite.Sprite):
 
@@ -34,22 +37,22 @@ class OptionBox(pygame.sprite.Sprite):
 
 class Player1(pygame.sprite.Sprite):
 
-    def __init__(self, GameSpace, playerNum):
+    def __init__(self, GameSpace, playerNum, playerPoke):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
         self.action = "wait"
         
         #GENERATE POKEMON
         if playerNum == 1:
-            self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
-            self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
+            self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + ".png")
+            self.original = pygame.image.load("./pokeDex/" + playerPoke + ".png")
 
             self.trainer = pygame.image.load("./trainerDex/bigman.png")
             self.originalTrainer = pygame.image.load("./trainerDex/bigman.png")
 
         if playerNum == 2:
-            self.pokemon = pygame.image.load("./pokeDex/Charmander.png")
-            self.original = pygame.image.load("./pokeDex/Charmander.png")
+            self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + ".png")
+            self.original = pygame.image.load("./pokeDex/" + playerPoke + ".png")
 
             self.trainer = pygame.image.load("./trainerDex/lilboy.png")
             self.originalTrainer = pygame.image.load("./trainerDex/lilboy.png")
@@ -71,19 +74,19 @@ class Player1(pygame.sprite.Sprite):
 
 class Player2(pygame.sprite.Sprite):
 
-    def __init__(self, GameSpace, playerNum):
+    def __init__(self, GameSpace, playerNum, playerPoke):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
 
         #GENERATE POKEMON
         if playerNum == 1:
-            self.pokemon = pygame.image.load("./pokeDex/Charmanderback.png")
-            self.original = pygame.image.load("./pokeDex/Charmanderback.png")
+            self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + "back.png")
+            self.original = pygame.image.load("./pokeDex/" + playerPoke + "back.png")
 
 
         if playerNum == 2:
-            self.pokemon = pygame.image.load("./pokeDex/Bulbasaurback.png")
-            self.original = pygame.image.load("./pokeDex/Bulbasaurback.png")
+            self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + "back.png")
+            self.original = pygame.image.load("./pokeDex/" + playerPoke + "back.png")
 
 
         self.rect = self.pokemon.get_rect()
@@ -101,28 +104,39 @@ class Player2(pygame.sprite.Sprite):
 #step 1: initializing GameSpace
 class GameSpace:
 
-    def main(self, playerNum, conn):
-        #initializePlayers(playerNum)
+    def main(self, pNum, poke):
 
         pygame.init()
         self.size = self.width, self.height = 650, 400
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
-        self.conn = conn #save connection
-
-#step 2: initialize game objects
-        self.player1 = Player1(self, playerNum)
-        self.player2 = Player2(self,playerNum)
+        #self.fact = Player1Factory(poke, pNum)
+        if pNum == 1:
+            self.fact = Player1Factory(poke, pNum)
+            reactor.listenTCP(45050, self.fact)
+        elif pNum == 2:
+            self.fact = PlayerFactory(poke, pNum)
+            reactor.connectTCP("ash.campus.nd.edu", 45050, self.fact)
+            
+        #self.conn = conn #save connection
+        self.playerPoke = poke
+        self.otherPoke = self.playerPoke #self.conn.inp
+        
+        #step 2: initialize game objects
+        self.player1 = Player1(self, pNum, self.playerPoke)
+        self.player2 = Player2(self, pNum, self.otherPoke)
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
+        print 'before loop'
+    
+        #step 3: start game loop
+        #while 1:
+        #step 4: tick regulation
+        #    self.clock.tick(60)
 
-
-#step 3: start game loop
-        while 1:
-#step 4: tick regulation
-            self.clock.tick(60)
-
+        #step 4 tick regulate / start game loop
+        def game_tick():
 #step 5: reading user input
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
@@ -157,7 +171,7 @@ class GameSpace:
             self.player2.tick()
             self.optionBox.tick()
 
-#step 7: update the screen
+            #step 7: update the screen
             self.screen.fill(self.black)
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
@@ -171,21 +185,30 @@ class GameSpace:
             self.optionBox.writeText(30, "RUN", 375, 330)
 
 
-            pygame.display.flip()
+            pygame.display.flip() #''
 
+        tick = LoopingCall(game_tick)
+        tick.start(1.0 / 60)
+
+        reactor.run()
+            
 #later as part of step 1
 if __name__=='__main__':
-    gs = GameSpace()
-
-    if len(sys.argv) != 2:
-        print "Invalid number of command line arguments."
-        usage(sys.argv)
+    log.startLogging(sys.stdout)
+    
+    if len(sys.argv) != 3:
+        print "Invalid number of command line arguments.\nFormat: final.py <playerNum> <PokeName>"
+        sys.exit(0)
+        # usage(sys.argv)
 
     elif sys.argv[1] != "1":
         if sys.argv[1] != "2":
             print "Invalid player number."
-            usage(sys.argv)
+            sys.exit(0)
+            # usage(sys.argv)
 
     playerNum = int(sys.argv[1])
-    initializePlayers(playerNum, gs)
-    #gs.main()
+    playerPoke = str(sys.argv[2])
+    #initializePlayers(playerPoke,playerNum)
+    gs = GameSpace()
+    gs.main(playerNum, playerPoke)
