@@ -42,12 +42,22 @@ class Player1(pygame.sprite.Sprite):
         if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
             self.original = pygame.image.load("./pokeDex/Bulbasaur.png")
+
+            self.trainer = pygame.image.load("./trainerDex/bigman.png")
+            self.originalTrainer = pygame.image.load("./trainerDex/bigman.png")
+
         if playerNum == 2:
-            self.pokemon = pygame.image.load("./pokeDex/CharzardLeft.png")
-            self.original = pygame.image.load("./pokeDex/CharzardLeft.png")
+            self.pokemon = pygame.image.load("./pokeDex/Charmander.png")
+            self.original = pygame.image.load("./pokeDex/Charmander.png")
+
+            self.trainer = pygame.image.load("./trainerDex/lilboy.png")
+            self.originalTrainer = pygame.image.load("./trainerDex/lilboy.png")
+
         self.rect = self.pokemon.get_rect()
+        self.rectTrainer = self.trainer.get_rect()
         self.speed = [0,0]
-        self.rect = self.rect.move(450,75)
+        self.rect = self.rect.move(425,45)
+        self.rectTrainer = self.rectTrainer.move(365,40)
 
     def move(self):
         self.rect.move_ip(self.speed)
@@ -63,14 +73,19 @@ class Player2(pygame.sprite.Sprite):
 
         #GENERATE POKEMON
         if playerNum == 1:
-            self.pokemon = pygame.image.load("./pokeDex/Charzard.png")
-            self.original = pygame.image.load("./pokeDex/Charzard.png")
+            self.pokemon = pygame.image.load("./pokeDex/Charmanderback.png")
+            self.original = pygame.image.load("./pokeDex/Charmanderback.png")
+
+
         if playerNum == 2:
-            self.pokemon = pygame.image.load("./pokeDex/BulbasaurRight.png")
-            self.original = pygame.image.load("./pokeDex/BulbasaurRight.png")
+            self.pokemon = pygame.image.load("./pokeDex/Bulbasaurback.png")
+            self.original = pygame.image.load("./pokeDex/Bulbasaurback.png")
+
+
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
-        self.rect = self.rect.move(105,185)
+        self.rect = self.rect.move(95,165)
+
 
     def move(self):
         self.rect.move_ip(self.speed)
@@ -144,6 +159,7 @@ class GameSpace:
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
             self.screen.blit(self.player1.pokemon, self.player1.rect)
             self.screen.blit(self.player2.pokemon, self.player2.rect)
+            self.screen.blit(self.player1.trainer, self.player1.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
 
             self.optionBox.writeText(30, "FIGHT", 375, 250)
