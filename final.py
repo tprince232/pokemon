@@ -35,7 +35,7 @@ class OptionBox(pygame.sprite.Sprite):
     def tick(self):
         pass
 
-class Player1(pygame.sprite.Sprite):
+class Player2(pygame.sprite.Sprite):
 
     def __init__(self, GameSpace, playerNum, playerPoke):
         pygame.sprite.Sprite.__init__(self)
@@ -63,6 +63,19 @@ class Player1(pygame.sprite.Sprite):
         self.rect = self.rect.move(425,45)
         self.rectTrainer = self.rectTrainer.move(365,40)
 
+        if playerPoke == "Charmander":
+            self.specialMove = "Flamethrower"
+            self.damage = 35
+        elif playerPoke == "Bulbasaur":
+            self.specialMove = "Razor Leaf"
+            self.damage = 40
+        elif playerPoke == "Squirtle":
+            self.specialMove = "Hydroblast"
+            self.damage = 40
+        else:
+            self.specialMove = "Hyper Beam"
+            self.damage = 20
+
     def move(self):
         self.rect.move_ip(self.speed)
 
@@ -72,7 +85,7 @@ class Player1(pygame.sprite.Sprite):
         if self.action == "tackle":
             pass
 
-class Player2(pygame.sprite.Sprite):
+class Player1(pygame.sprite.Sprite):
 
     def __init__(self, GameSpace, playerNum, playerPoke):
         pygame.sprite.Sprite.__init__(self)
@@ -93,6 +106,18 @@ class Player2(pygame.sprite.Sprite):
         self.speed = [0,0]
         self.rect = self.rect.move(95,165)
 
+        if playerPoke == "Charmander":
+            self.specialMove = "Flamethrower"
+            self.damage = 35
+        elif playerPoke == "Bulbasaur":
+            self.specialMove = "Razor Leaf"
+            self.damage = 40
+        elif playerPoke == "Squirtle":
+            self.specialMove = "Hydroblast"
+            self.damage = 40
+        else:
+            self.specialMove = "Hyper Beam"
+            self.damage = 20
 
     def move(self):
         self.rect.move_ip(self.speed)
@@ -105,14 +130,13 @@ class Player2(pygame.sprite.Sprite):
 class GameSpace:
 
     def main(self, pNum, poke):
-
         pygame.init()
         self.size = self.width, self.height = 650, 400
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        port = 46050
+        port = 40321
         if pNum == 1:
             self.fact = Player1Factory(poke, pNum)
             reactor.listenTCP(port, self.fact)
@@ -129,6 +153,7 @@ class GameSpace:
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
+        self.showMove = 0
 
         #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
@@ -136,7 +161,7 @@ class GameSpace:
             #step 5: reading user input
             if self.player2isInit == 0:
                 try:
-                    print "writing!"
+                    # print "writing!"
                     self.fact.playerConn.transport.write("getPoke")
                     if self.fact.playerConn.inp != "":
                         otherPoke = self.fact.playerConn.inp
@@ -155,13 +180,21 @@ class GameSpace:
                     pos = pygame.mouse.get_pos()
                     if pos[0] > 374 and pos[0] < 474:
                         if pos[1] >= 250 and pos[1] < 290:
-                            print "FIGHT clicked"
+                            print "TACKLE clicked"
                             print "POS: " + str(pos)
+
+
                         if pos[1] >= 290 and pos[1] < 330:
-                            print "POKeMON clicked"
+                            print "SPECIAL clicked"
+                            print self.player1.specialMove
+                            print "Damage: " + str(self.player1.damage)
+                            print self.player2.specialMove
+                            print "Damage: " + str(self.player2.damage)
                             # print "POS: " + str(pos)
+                            self.showMove = 1
                         if pos[1] >= 330 and pos[1] < 370:
                             print "RUN clicked"
+                            RUNNING = False
                             # print "POS: " + str(pos)
 
 
@@ -195,12 +228,15 @@ class GameSpace:
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
             self.screen.blit(self.player1.pokemon, self.player1.rect)
             self.screen.blit(self.player2.pokemon, self.player2.rect)
-            self.screen.blit(self.player1.trainer, self.player1.rectTrainer)
+            self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
 
-            self.optionBox.writeText(30, "FIGHT", 375, 250)
-            self.optionBox.writeText(30, "POKeMON", 375, 290)
+            self.optionBox.writeText(30, "TACKLE", 375, 250)
+            self.optionBox.writeText(30, "SPECIAL", 375, 290)
             self.optionBox.writeText(30, "RUN", 375, 330)
+            if self.showMove == 1:
+                pass
+                # self.optionBox.writeText(40,str(self.player1.specialMove) , 75, 75)
 
 
             pygame.display.flip()

@@ -10,7 +10,7 @@ class Player1Connection(Protocol):
         #self.gs = GameSpace()
         self.poke = playerPoke;
         self.inp = ""
-        
+
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
@@ -29,7 +29,7 @@ class Player1Factory(Factory):
         return self.playerConn
 
 
-    
+
 class PlayerConnection(Protocol):
     def __init__(self, playerPoke, pNum):
         self.connected = 0
@@ -37,8 +37,8 @@ class PlayerConnection(Protocol):
         self.poke = playerPoke
         self.pNum = pNum
         self.inp = ""
-        
-        
+
+
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
@@ -62,7 +62,7 @@ class PlayerFactory(ClientFactory):
 
 def initializePlayers(playerPoke, playerNum):
     print "Detected player num:", playerNum
-    port = 45050
+    port = 40321
     if playerNum == 1:
         factory = PlayerFactory(playerPoke, 1)
         reactor.listenTCP(port, factory)
