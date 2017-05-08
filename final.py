@@ -1,6 +1,7 @@
 import pygame, math, sys
 from pygame.locals import *
 from connections import *
+from animations import *
 
 class OptionBox(pygame.sprite.Sprite):
 
