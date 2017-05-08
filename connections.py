@@ -13,7 +13,7 @@ class Player1Connection(Protocol):
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
-        self.gs.main(1)
+        self.gs.main(1, self)
 
     def dataReceived(self, data):
         pass
@@ -36,7 +36,7 @@ class Player2Connection(Protocol):
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
-        self.gs.main(2)
+        self.gs.main(2, self)
 
     def dataReceived(self, data):
         pass

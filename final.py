@@ -37,7 +37,8 @@ class Player1(pygame.sprite.Sprite):
     def __init__(self, GameSpace, playerNum):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
-
+        self.action = "wait"
+        
         #GENERATE POKEMON
         if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/Bulbasaur.png")
@@ -62,8 +63,11 @@ class Player1(pygame.sprite.Sprite):
     def move(self):
         self.rect.move_ip(self.speed)
 
+
+        
     def tick(self):
-        pass
+        if self.action == "tackle":
+            pass
 
 class Player2(pygame.sprite.Sprite):
 
@@ -97,7 +101,7 @@ class Player2(pygame.sprite.Sprite):
 #step 1: initializing GameSpace
 class GameSpace:
 
-    def main(self, playerNum):
+    def main(self, playerNum, conn):
         #initializePlayers(playerNum)
 
         pygame.init()
@@ -105,7 +109,7 @@ class GameSpace:
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
-
+        self.conn = conn #save connection
 
 #step 2: initialize game objects
         self.player1 = Player1(self, playerNum)
