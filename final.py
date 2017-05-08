@@ -47,8 +47,8 @@ class Player1(pygame.sprite.Sprite):
             self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + ".png")
             self.original = pygame.image.load("./pokeDex/" + playerPoke + ".png")
 
-            self.trainer = pygame.image.load("./trainerDex/bigman.png")
-            self.originalTrainer = pygame.image.load("./trainerDex/bigman.png")
+            self.trainer = pygame.image.load("./trainerDex/ashketchum.png")
+            self.originalTrainer = pygame.image.load("./trainerDex/ashketchum.png")
 
         if playerNum == 2:
             self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + ".png")
@@ -151,9 +151,10 @@ class GameSpace:
                     #self.player.move()
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == pygame.MOUSEBUTTONUP:
-                    pos = pygame.mouse.get_pos()
-                    print "POS: " + str(pos)
+                # if event.type == pygame.MOUSEBUTTONUP:
+                #     if pos[0] >
+                #     pos = pygame.mouse.get_pos()
+                #     print "POS: " + str(pos)
 
 
             keys = pygame.key.get_pressed()
