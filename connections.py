@@ -2,7 +2,6 @@ from twisted.internet.protocol import Factory
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
-#from final import *
 import sys
 
 class Player1Connection(Protocol):
@@ -44,10 +43,6 @@ class PlayerConnection(Protocol):
         print "Connection made."
         self.connected = 1
         print "before launch"
-        #self.gs.main(self.pNum, self)
-        print "after launch"
-        if self.pNum == 2:
-            self.transport.write("test connection from p2")
 
     def dataReceived(self, data):
         print "Got data:", data

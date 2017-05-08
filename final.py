@@ -111,33 +111,40 @@ class GameSpace:
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
-        #self.fact = Player1Factory(poke, pNum)
+        
+        port = 46050
         if pNum == 1:
             self.fact = Player1Factory(poke, pNum)
-            reactor.listenTCP(45050, self.fact)
+            reactor.listenTCP(port, self.fact)
         elif pNum == 2:
             self.fact = PlayerFactory(poke, pNum)
-            reactor.connectTCP("ash.campus.nd.edu", 45050, self.fact)
-            
-        #self.conn = conn #save connection
+            reactor.connectTCP("ash.campus.nd.edu", port, self.fact)
+        
         self.playerPoke = poke
-        self.otherPoke = self.playerPoke #self.conn.inp
+        self.otherPoke = self.playerPoke 
         
         #step 2: initialize game objects
         self.player1 = Player1(self, pNum, self.playerPoke)
         self.player2 = Player2(self, pNum, self.otherPoke)
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
-        print 'before loop'
-    
-        #step 3: start game loop
-        #while 1:
-        #step 4: tick regulation
-        #    self.clock.tick(60)
-
-        #step 4 tick regulate / start game loop
+        self.player2isInit = 0
+        
+        #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
-#step 5: reading user input
+            
+            #step 5: reading user input
+            if self.player2isInit == 0:
+                try:
+                    print "writing!"
+                    self.fact.playerConn.transport.write("getPoke")
+                    if self.fact.playerConn.inp != "":
+                        otherPoke = self.fact.playerConn.inp
+                        self.player2 = Player2(self, pNum, otherPoke)
+                        self.player2isInit = 1 
+                except:
+                    pass
+            
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     pass
@@ -185,7 +192,7 @@ class GameSpace:
             self.optionBox.writeText(30, "RUN", 375, 330)
 
 
-            pygame.display.flip() #''
+            pygame.display.flip()
 
         tick = LoopingCall(game_tick)
         tick.start(1.0 / 60)
@@ -199,16 +206,14 @@ if __name__=='__main__':
     if len(sys.argv) != 3:
         print "Invalid number of command line arguments.\nFormat: final.py <playerNum> <PokeName>"
         sys.exit(0)
-        # usage(sys.argv)
 
     elif sys.argv[1] != "1":
         if sys.argv[1] != "2":
-            print "Invalid player number."
+            print "Invalid player number.\nFormat: final.py <playerNum> <PokeName>"
             sys.exit(0)
-            # usage(sys.argv)
 
     playerNum = int(sys.argv[1])
     playerPoke = str(sys.argv[2])
-    #initializePlayers(playerPoke,playerNum)
+
     gs = GameSpace()
     gs.main(playerNum, playerPoke)
