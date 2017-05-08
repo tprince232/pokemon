@@ -41,7 +41,7 @@ class Player1(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
         self.action = "wait"
-        
+
         #GENERATE POKEMON
         if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + ".png")
@@ -67,7 +67,7 @@ class Player1(pygame.sprite.Sprite):
         self.rect.move_ip(self.speed)
 
 
-        
+
     def tick(self):
         if self.action == "tackle":
             pass
@@ -111,7 +111,7 @@ class GameSpace:
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
-        
+
         port = 46050
         if pNum == 1:
             self.fact = Player1Factory(poke, pNum)
@@ -119,20 +119,20 @@ class GameSpace:
         elif pNum == 2:
             self.fact = PlayerFactory(poke, pNum)
             reactor.connectTCP("ash.campus.nd.edu", port, self.fact)
-        
+
         self.playerPoke = poke
-        self.otherPoke = self.playerPoke 
-        
+        self.otherPoke = self.playerPoke
+
         #step 2: initialize game objects
         self.player1 = Player1(self, pNum, self.playerPoke)
         self.player2 = Player2(self, pNum, self.otherPoke)
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
-        
+
         #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
-            
+
             #step 5: reading user input
             if self.player2isInit == 0:
                 try:
@@ -141,17 +141,19 @@ class GameSpace:
                     if self.fact.playerConn.inp != "":
                         otherPoke = self.fact.playerConn.inp
                         self.player2 = Player2(self, pNum, otherPoke)
-                        self.player2isInit = 1 
+                        self.player2isInit = 1
                 except:
                     pass
-            
+
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     pass
                     #self.player.move()
                 if event.type == pygame.QUIT:
                     sys.exit()
-
+                if event.type == pygame.MOUSEBUTTONUP:
+                    pos = pygame.mouse.get_pos()
+                    print "POS: " + str(pos)
 
 
             keys = pygame.key.get_pressed()
@@ -198,11 +200,11 @@ class GameSpace:
         tick.start(1.0 / 60)
 
         reactor.run()
-            
+
 #later as part of step 1
 if __name__=='__main__':
     log.startLogging(sys.stdout)
-    
+
     if len(sys.argv) != 3:
         print "Invalid number of command line arguments.\nFormat: final.py <playerNum> <PokeName>"
         sys.exit(0)
