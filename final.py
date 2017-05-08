@@ -151,10 +151,18 @@ class GameSpace:
                     #self.player.move()
                 if event.type == pygame.QUIT:
                     sys.exit()
-                # if event.type == pygame.MOUSEBUTTONUP:
-                #     if pos[0] >
-                #     pos = pygame.mouse.get_pos()
-                #     print "POS: " + str(pos)
+                if event.type == pygame.MOUSEBUTTONUP:
+                    pos = pygame.mouse.get_pos()
+                    if pos[0] > 374 and pos[0] < 474:
+                        if pos[1] >= 250 and pos[1] < 290:
+                            print "FIGHT clicked"
+                            print "POS: " + str(pos)
+                        if pos[1] >= 290 and pos[1] < 330:
+                            print "POKeMON clicked"
+                            # print "POS: " + str(pos)
+                        if pos[1] >= 330 and pos[1] < 370:
+                            print "RUN clicked"
+                            # print "POS: " + str(pos)
 
 
             keys = pygame.key.get_pressed()
