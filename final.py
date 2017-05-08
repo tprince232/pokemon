@@ -129,7 +129,9 @@ class GameSpace:
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
-
+        self.inFight = 0
+        self.stream = SpriteContainer(self)
+        
         #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
 
@@ -157,14 +159,20 @@ class GameSpace:
                         if pos[1] >= 250 and pos[1] < 290:
                             print "FIGHT clicked"
                             print "POS: " + str(pos)
+                            #self.inFight = 1
+                            
                         if pos[1] >= 290 and pos[1] < 330:
                             print "POKeMON clicked"
+                            self.inFight = 1
+                            self.fact.playerConn.transport.write("special")
                             # print "POS: " + str(pos)
                         if pos[1] >= 330 and pos[1] < 370:
                             print "RUN clicked"
                             # print "POS: " + str(pos)
 
-
+            if self.fact.playerConn.inp == "special":
+                inFight = 1
+                
             keys = pygame.key.get_pressed()
 
             if keys[K_DOWN]:
@@ -177,18 +185,22 @@ class GameSpace:
                 self.player1.speed[0] = -10
 
 
+            if self.inFight == 1:
+                self.stream.enter(Hyperbeam(self, 1))
+                
             self.player1.move()
             self.player1.speed = [0,0]
             self.player2.move()
             self.player2.speed = [0,0]
 
-#step 6: for every sprite/game object, call tick()
+            #step 6: for every sprite/game object, call tick()
 
 
             self.player1.tick()
             self.player2.tick()
             self.optionBox.tick()
-
+            self.stream.tick()
+            
             #step 7: update the screen
             self.screen.fill(self.black)
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
@@ -197,7 +209,10 @@ class GameSpace:
             self.screen.blit(self.player2.pokemon, self.player2.rect)
             self.screen.blit(self.player1.trainer, self.player1.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
+            for item in self.stream.items:
+                self.screen.blit(item.image, item.rect)
 
+            
             self.optionBox.writeText(30, "FIGHT", 375, 250)
             self.optionBox.writeText(30, "POKeMON", 375, 290)
             self.optionBox.writeText(30, "RUN", 375, 330)

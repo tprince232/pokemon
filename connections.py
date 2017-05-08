@@ -33,7 +33,6 @@ class Player1Factory(Factory):
 class PlayerConnection(Protocol):
     def __init__(self, playerPoke, pNum):
         self.connected = 0
-        #self.gs = GameSpace()
         self.poke = playerPoke
         self.pNum = pNum
         self.inp = ""
@@ -42,12 +41,13 @@ class PlayerConnection(Protocol):
     def connectionMade(self):
         print "Connection made."
         self.connected = 1
-        print "before launch"
 
     def dataReceived(self, data):
         print "Got data:", data
         if data == "getPoke":
             self.transport.write(self.poke)
+        elif data == "special":
+            self.inp = data
         else:
             self.inp = data
 
