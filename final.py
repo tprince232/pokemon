@@ -149,6 +149,7 @@ class GameSpace:
         #step 2: initialize game objects
         self.player1 = Player1(self, pNum, self.playerPoke)
         self.player2 = Player2(self, pNum, self.otherPoke)
+        self.players = [self.player1, self.player2]
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
@@ -169,6 +170,7 @@ class GameSpace:
                         self.player2 = Player2(self, pNum, otherPoke)
                         self.player2isInit = 1
                         self.resetInp()
+                        self.players = [self.player1, self.player2]
                 except:
                     pass
                 
@@ -220,8 +222,13 @@ class GameSpace:
                 self.player1.speed[0] = -10
 
 
-            if self.inFight != 0:
-                self.stream.enter(Hyperbeam(self, self.inFight))
+            if self.inFight != 0:          
+                if self.players[self.inFight-1].specialMove == "Hydroblast":
+                    self.stream.enter(Hydroblast(self, self.inFight))
+                elif self.players[self.inFight-1].specialMove == "Razor Leaf":
+                    self.stream.enter(RazorLeaf(self, self.inFight))
+                else:
+                    self.stream.enter(Hyperbeam(self, self.inFight))
                 
             self.player1.move()
             self.player1.speed = [0,0]
