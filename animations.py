@@ -20,10 +20,12 @@ class SpriteContainer():
                 if item.rect.x > item.endx or item.rect.y < item.endy:
                     self.items.remove(item)
                     self.gs.inFight = 0
+                    #print "inFight to 0"
             elif item.P == 2:
                 if item.rect.x < item.endx or item.rect.y > item.endy:
                     self.items.remove(item)
                     self.gs.inFight = 0
+                    #print "inFight to 0"
 
 class SpriteBall(pygame.sprite.Sprite):
     def __init__(self, gs, image, P, rate):
@@ -35,19 +37,19 @@ class SpriteBall(pygame.sprite.Sprite):
 
     def initCoords(self):
         if self.P == 1:
-            self.rect.x = 300
-            self.rect.y = 275
-            self.dx = self.rate
+            self.rect.x = 200
+            self.rect.y = 280
+            self.dx = 1.55 * self.rate
             self.dy = -.75 * self.rate
-            self.endx = 450
-            self.endy = 100
+            self.endx = 485
+            self.endy = 135
         elif self.P == 2:
-            self.rect.x = 450
-            self.rect.y = 100
-            self.dx = -1 * self.rate
-            self.dy = .75 *self.rate
-            self.endx = 300
-            self.endy = 275
+            self.rect.x = 480
+            self.rect.y = 140
+            self.dx = -1.55 * self.rate
+            self.dy =   .75 *self.rate
+            self.endx = 195
+            self.endy = 285
             
     def move(self):
         self.rect.x = self.rect.x + self.dx

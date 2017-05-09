@@ -4,39 +4,21 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 import sys
 
-class Player1Connection(Protocol):
-    def __init__(self, gs, playerPoke):
-        self.connected = 0
-        #self.gs = GameSpace()
-        self.poke = playerPoke;
-        self.inp = ""
-
-    def connectionMade(self):
-        print "Connection made."
-        self.connected = 1
-
-        #self.gs.main(1, self)
-
-    def dataReceived(self, data):
-        self.imp = data
-
-
-class Player1Factory(Factory):
-    def __init__(self, gs, playerPoke):
-        self.playerConn = PlayerConnection(gs, playerPoke)
+#normal player factory
+class PlayerFactory(Factory):
+    def __init__(self, pNum, poke):
+        self.playerConn = PlayerConnection(pNum, poke)
 
     def buildProtocol(self, addr):
         return self.playerConn
 
 
-
 class PlayerConnection(Protocol):
-    def __init__(self, playerPoke, pNum):
+    def __init__(self, pNum, poke):
         self.connected = 0
-        self.poke = playerPoke
         self.pNum = pNum
+        self.poke = poke
         self.inp = ""
-
 
     def connectionMade(self):
         print "Connection made."
@@ -47,28 +29,14 @@ class PlayerConnection(Protocol):
         if data == "getPoke":
             self.transport.write(self.poke)
         elif data == "special":
-            self.inp = data
+            self.inp = "special"
         else:
             self.inp = data
 
-
-class PlayerFactory(ClientFactory):
-    def __init__(self, playerPoke, pNum):
-        self.playerConn = PlayerConnection(playerPoke, pNum)
+#client player factory
+class PlayerCFactory(ClientFactory):
+    def __init__(self, pNum, poke):
+        self.playerConn = PlayerConnection(pNum, poke)
 
     def buildProtocol(self, addr):
         return self.playerConn
-
-
-def initializePlayers(playerPoke, playerNum):
-    print "Detected player num:", playerNum
-    port = 40321
-    if playerNum == 1:
-        factory = PlayerFactory(playerPoke, 1)
-        reactor.listenTCP(port, factory)
-        reactor.run()
-
-    elif playerNum == 2:
-        factory = PlayerFactory(playerPoke, 2)
-        reactor.connectTCP("ash.campus.nd.edu", port, factory)
-        reactor.run()
