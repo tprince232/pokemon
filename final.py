@@ -25,11 +25,11 @@ class OptionBox(pygame.sprite.Sprite):
         self.rect = self.box.get_rect()
         self.rect = self.rect.move(345,220)
 
-    def writeText(self, size, text, w, h):
+    def writeText(self, size, text, w, h, color):
 #Create OptionBox FONT (fight)
         self.myfont = pygame.font.SysFont("monospace", size)
 # render text
-        self.label = self.myfont.render(text, 1, (0,0,0))
+        self.label = self.myfont.render(text, 1, color)
         self.gamespace.screen.blit(self.label, (w, h))
 
     def tick(self):
@@ -153,10 +153,10 @@ class GameSpace:
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
-        self.inFight = 0
-        self.stream = SpriteContainer(self)
         self.showMove = 0
-
+        self.tackleColor = (0,0,0)
+        self.specialColor = (0,0,0)
+        self.runColor = (0,0,0)
         #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
 
@@ -182,29 +182,35 @@ class GameSpace:
                     pos = pygame.mouse.get_pos()
                     if pos[0] > 374 and pos[0] < 474:
                         if pos[1] >= 250 and pos[1] < 290:
+                            self.tackleColor = (255,0,0)
+                            self.specialColor = (0,0,0)
+                            self.runColor = (0,0,0)
                             print "TACKLE clicked"
                             print "POS: " + str(pos)
-                            
-                        if pos[1] >= 290 and pos[1] < 330:
-                    
-                            self.inFight = 1
-                            self.fact.playerConn.transport.write("special")
 
+                        if pos[1] >= 290 and pos[1] < 330:
+                            self.tackleColor = (0,0,0)
+                            self.specialColor = (255,0,0)
+                            self.runColor = (0,0,0)
                             print "SPECIAL clicked"
                             print self.player1.specialMove
                             print "Damage: " + str(self.player1.damage)
                             print self.player2.specialMove
                             print "Damage: " + str(self.player2.damage)
+                            # print "POS: " + str(pos)
                             self.showMove = 1
-                            
                         if pos[1] >= 330 and pos[1] < 370:
+                            self.tackleColor = (0,0,0)
+                            self.specialColor = (0,0,0)
+                            self.runColor = (255,0,0)
                             print "RUN clicked"
                             RUNNING = False
                             # print "POS: " + str(pos)
+                else:
+                    self.tackleColor = (0,0,0)
+                    self.specialColor = (0,0,0)
+                    self.runColor = (0,0,0)
 
-            if self.fact.playerConn.inp == "special":
-                inFight = 1
-                
             keys = pygame.key.get_pressed()
 
             if keys[K_DOWN]:
@@ -217,22 +223,18 @@ class GameSpace:
                 self.player1.speed[0] = -10
 
 
-            if self.inFight == 1:
-                self.stream.enter(Hyperbeam(self, 1))
-                
             self.player1.move()
             self.player1.speed = [0,0]
             self.player2.move()
             self.player2.speed = [0,0]
 
-            #step 6: for every sprite/game object, call tick()
+#step 6: for every sprite/game object, call tick()
 
 
             self.player1.tick()
             self.player2.tick()
             self.optionBox.tick()
-            self.stream.tick()
-            
+
             #step 7: update the screen
             self.screen.fill(self.black)
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
@@ -241,12 +243,10 @@ class GameSpace:
             self.screen.blit(self.player2.pokemon, self.player2.rect)
             self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
-            for item in self.stream.items:
-                self.screen.blit(item.image, item.rect)
 
-            self.optionBox.writeText(30, "TACKLE", 375, 250)
-            self.optionBox.writeText(30, "SPECIAL", 375, 290)
-            self.optionBox.writeText(30, "RUN", 375, 330)
+            self.optionBox.writeText(30, "TACKLE", 375, 250,self.tackleColor)
+            self.optionBox.writeText(30, "SPECIAL", 375, 290,self.specialColor)
+            self.optionBox.writeText(30, "RUN", 375, 330,self.runColor)
             if self.showMove == 1:
                 pass
                 # self.optionBox.writeText(40,str(self.player1.specialMove) , 75, 75)
