@@ -1,0 +1,29 @@
+Our game is a simple pokemon battle.  For an example of what we trying to emulate, check out this youtube link:
+
+https://www.youtube.com/watch?v=vGOPihbhs-A
+
+Obviously, our graphics are not as up to speed as the ones in the video, but you can get a gist of how the game works.  One player goes, the other player looses damage, the other player goes, etc.
+
+To play, run
+python final.py 1 [Pokemon name]
+
+Except replace [Pokemon name] with any of these names:
+Bulbasaur
+Squirtle
+Charmander
+Eevee
+
+And be sure to run on ash.
+
+Then in a different ash terminal, run
+python final.py 2 [Pokemon name]
+
+again, replacing [Pokemon name] with a Pokemon listed above.
+
+It is important to run the command with 1 first, since it listens for the command with 2.  Before the connection is made, only your Pokemon will display.  But when the connection is made, the opposing Pokemon will appear. Then you can begin gameplay (it is buggy if you attempt to press buttons before the connection is made).
+
+Then the players can start battling.  Player 1 should go first, then when their animation is complete, player 2 should go.  Special uses the Pokemon's special move, and any Pokemon can tackle.  Each move does a certain amount of damage to the other Pokemon.  The Run button will have your Pokemon flee the battle, and pygame will close.   We have not blocked simultaneous moves, but each Pokemon should wait until the other player's animation has completed before they move.  When a Pokemon's health goes below 0, they will be KOed and disapear.  
+
+We really enjoyed making this, and if we had more time we would smoothen out more bugs and restraints.  We plan to also submit a video by Friday.  Enjoy!
+
+Troy and Travis

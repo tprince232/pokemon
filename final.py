@@ -94,9 +94,7 @@ class Player2(pygame.sprite.Sprite):
             
     def tick(self):
         if self.isTackling == 1:
-            self.move()
-  
-  
+            self.move()  
 
     def Death(self, isDead):
         if isDead == True:
@@ -104,12 +102,11 @@ class Player2(pygame.sprite.Sprite):
             self.rect = self.rect.move(420,45)
 
     def writeText(self, size, text, w, h, color):
-#Create OptionBox FONT (fight)
+        #Create OptionBox FONT (fight)
         self.myfont = pygame.font.SysFont("monospace", size)
-# render text
+        # render text
         self.label = self.myfont.render(text, 1, color)
         self.gamespace.screen.blit(self.label, (w, h))
-
 
 
 class Player1(pygame.sprite.Sprite):
@@ -258,8 +255,6 @@ class GameSpace:
                             self.tackleColor = (255,0,0)
                             self.specialColor = (0,0,0)
                             self.runColor = (0,0,0)
-                            print "TACKLE clicked"
-                            print "POS: " + str(pos)
                             self.player1.isTackling = 1
                             self.fact.playerConn.transport.write("tackle")
                             self.healthP2 = self.healthP2 - self.tackle
@@ -268,7 +263,6 @@ class GameSpace:
                             self.tackleColor = (0,0,0)
                             self.specialColor = (255,0,0)
                             self.runColor = (0,0,0)
-                            print "SPECIAL clicked"
                             self.inFight = 1
                             self.fact.playerConn.transport.write("special")
 

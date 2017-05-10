@@ -25,7 +25,6 @@ class PlayerConnection(Protocol):
         self.connected = 1
 
     def dataReceived(self, data):
-        print "Got data:", data
         if data.startswith("getPoke"):
             self.transport.write(self.poke)
         elif data == "special":
