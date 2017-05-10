@@ -153,10 +153,10 @@ class GameSpace:
 
         port = 40321
         if pNum == 1:
-            self.fact = PlayerFactory(poke, pNum)
+            self.fact = PlayerFactory(pNum, poke)
             reactor.listenTCP(port, self.fact)
         elif pNum == 2:
-            self.fact = PlayerCFactory(poke, pNum)
+            self.fact = PlayerCFactory(pNum, poke)
             reactor.connectTCP("ash.campus.nd.edu", port, self.fact)
 
         self.playerPoke = poke
@@ -165,10 +165,13 @@ class GameSpace:
         #step 2: initialize game objects
         self.player1 = Player1(self, pNum, self.playerPoke)
         self.player2 = Player2(self, pNum, self.otherPoke)
+        self.players = [self.player1, self.player2]
         self.optionBox = OptionBox(self)
         self.clock = pygame.time.Clock()
         self.player2isInit = 0
         self.showMove = 0
+        self.inFight = 0 #0 or no fight, 1 for self fight, 2 for opp fight
+        self.stream = SpriteContainer(self)
         self.tackleColor = (0,0,0)
         self.specialColor = (0,0,0)
         self.runColor = (0,0,0)
@@ -180,12 +183,13 @@ class GameSpace:
             #step 5: reading user input
             if self.player2isInit == 0:
                 try:
-                    # print "writing!"
                     self.fact.playerConn.transport.write("getPoke")
                     if self.fact.playerConn.inp != "":
                         otherPoke = self.fact.playerConn.inp
                         self.player2 = Player2(self, pNum, otherPoke)
                         self.player2isInit = 1
+                        self.resetInp()
+                        self.players = [self.player1, self.player2]
                 except:
                     pass
 
@@ -215,7 +219,10 @@ class GameSpace:
                             print self.player2.specialMove
                             print "Damage: " + str(self.player2.damage)
                             # print "POS: " + str(pos)
-                            self.showMove = 1
+                            self.inFight = 1
+                            self.fact.playerConn.transport.write("special")
+                                                        
+                            
                         if pos[1] >= 330 and pos[1] < 370:
                             self.tackleColor = (0,0,0)
                             self.specialColor = (0,0,0)
@@ -227,7 +234,13 @@ class GameSpace:
                     self.tackleColor = (0,0,0)
                     self.specialColor = (0,0,0)
                     self.runColor = (0,0,0)
-
+                
+            print self.inFight    
+            if self.fact.playerConn.inp == "special":
+                self.inFight = 2
+                self.resetInp()
+            
+                    
             keys = pygame.key.get_pressed()
 
             if keys[K_DOWN]:
@@ -261,15 +274,19 @@ class GameSpace:
             self.player1.tick()
             self.player2.tick()
             self.optionBox.tick()
-
+            self.stream.tick()
+            
             #step 7: update the screen
             self.screen.fill(self.black)
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
-            self.screen.blit(self.player1.pokemon, self.player1.rect)
-            self.screen.blit(self.player2.pokemon, self.player2.rect)
-            self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
+            if self.player2isInit == 1:
+                self.screen.blit(self.player2.pokemon, self.player2.rect)
+                self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
+            self.screen.blit(self.player1.pokemon, self.player1.rect)
+            for item in self.stream.items:
+                self.screen.blit(item.image, item.rect)
 
             self.optionBox.writeText(30, "TACKLE", 375, 250,self.tackleColor)
             self.optionBox.writeText(30, "SPECIAL", 375, 290,self.specialColor)
@@ -278,8 +295,8 @@ class GameSpace:
             self.player1.writeText(35, "HP: " + str(self.healthP1), 5, 225,(0,0,0))
             self.player2.writeText(35, "HP: " + str(self.healthP2), 475, 30,(0,0,0))
 
-            if self.showMove == 1:
-                pass
+            #if self.showMove == 1:
+            #    pass
                 # self.optionBox.writeText(40,str(self.player1.specialMove) , 75, 75)
 
             pygame.display.flip()
@@ -289,6 +306,10 @@ class GameSpace:
 
         reactor.run()
 
+    def resetInp(self):
+        self.fact.playerConn.inp == ""
+
+        
 #later as part of step 1
 if __name__=='__main__':
     log.startLogging(sys.stdout)

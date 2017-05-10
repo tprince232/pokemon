@@ -89,7 +89,6 @@ class RazorLeaf(SpriteBall):
         factor = random.random()
         self.dx = self.dx * (1 + factor-.5)
 
-
 class FlameThrower(SpriteBall):
     def __init__(self, gs, P):
         self.image = pygame.image.load("anims/fire.png")
@@ -104,5 +103,3 @@ class FlameThrower(SpriteBall):
             self.rect.x = self.rect.x - 20
         if P == 2:
             self.rect.y = self.rect.y - 15
-
-                                                                                                                                    
