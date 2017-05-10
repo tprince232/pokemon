@@ -242,6 +242,8 @@ class GameSpace:
                     self.stream.enter(Hydroblast(self, self.inFight))
                 elif self.players[self.inFight-1].specialMove == "Razor Leaf":
                     self.stream.enter(RazorLeaf(self, self.inFight))
+                elif self.players[self.inFight-1].specialMove == "Flamethrower":
+                    self.stream.enter(FlameThrower(self, self.inFight))
                 else:
                     self.stream.enter(Hyperbeam(self, self.inFight))
                 
