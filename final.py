@@ -101,7 +101,7 @@ class Player2(pygame.sprite.Sprite):
     def Death(self, isDead):
         if isDead == True:
             self.pokemon = pygame.image.load("./pokeDex/" + "tombstone" + ".png")
-            self.rect = self.rect.move(440,55)
+            self.rect = self.rect.move(420,45)
 
     def writeText(self, size, text, w, h, color):
 #Create OptionBox FONT (fight)
@@ -187,7 +187,7 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        port = 40321
+        port = 40350
         if pNum == 1:
             self.fact = PlayerFactory(pNum, poke)
             reactor.listenTCP(port, self.fact)
@@ -218,6 +218,7 @@ class GameSpace:
         self.razorleaf = 30
         self.flamethrower = 30
         self.hyperbeam = 20
+        self.tackle = 15
         self.RIP1 = False
         self.RIP2 = False
         self.HP1Color = (0,0,0)
@@ -261,17 +262,13 @@ class GameSpace:
                             print "POS: " + str(pos)
                             self.player1.isTackling = 1
                             self.fact.playerConn.transport.write("tackle")
+                            self.healthP2 = self.healthP2 - self.tackle
                             
                         if pos[1] >= 290 and pos[1] < 330:
                             self.tackleColor = (0,0,0)
                             self.specialColor = (255,0,0)
                             self.runColor = (0,0,0)
                             print "SPECIAL clicked"
-                            print self.player1.specialMove
-                            print "Damage: " + str(self.player1.damage)
-                            print self.player2.specialMove
-                            print "Damage: " + str(self.player2.damage)
-                            # print "POS: " + str(pos)
                             self.inFight = 1
                             self.fact.playerConn.transport.write("special")
 
@@ -291,7 +288,8 @@ class GameSpace:
                             self.runColor = (255,0,0)
                             print "RUN clicked"
                             RUNNING = False
-                            # print "POS: " + str(pos)
+                            self.fact.playerConn.transport.write("run")
+                            pygame.quit()
                 else:
                     self.tackleColor = (0,0,0)
                     self.specialColor = (0,0,0)
@@ -313,8 +311,12 @@ class GameSpace:
             elif self.fact.playerConn.inp == "tackle":
                 self.player2.isTackling = 1
                 self.resetInp()
+                self.healthP1 = self.healthP1 - self.tackle
 
-
+            elif self.fact.playerConn.inp == "run":
+                self.player2isInit = 2
+                self.resetInp()
+                
             if self.inFight != 0:
                 if self.players[self.inFight-1].specialMove == "Hydroblast":
                     self.stream.enter(Hydroblast(self, self.inFight))
