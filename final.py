@@ -85,6 +85,11 @@ class Player2(pygame.sprite.Sprite):
         if self.action == "tackle":
             pass
 
+    def Death(self, isDead):
+        if isDead == True:
+            self.pokemon = pygame.image.load("./pokeDex/" + "tombstone" + ".png")
+            self.rect = self.rect.move(440,55)
+
     def writeText(self, size, text, w, h, color):
 #Create OptionBox FONT (fight)
         self.myfont = pygame.font.SysFont("monospace", size)
@@ -134,6 +139,11 @@ class Player1(pygame.sprite.Sprite):
     def tick(self):
         pass
 
+    def Death(self, isDead):
+        if isDead == True:
+            self.pokemon = pygame.image.load("./pokeDex/" + "tombstone" + ".png")
+            self.rect = self.rect.move(40,150)
+
     def writeText(self, size, text, w, h, color):
 #Create OptionBox FONT (fight)
         self.myfont = pygame.font.SysFont("monospace", size)
@@ -151,7 +161,7 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        port = 40350
+        port = 40321
         if pNum == 1:
             self.fact = PlayerFactory(pNum, poke)
             reactor.listenTCP(port, self.fact)
@@ -177,6 +187,21 @@ class GameSpace:
         self.runColor = (0,0,0)
         self.healthP1 = 140
         self.healthP2 = 140
+        self.tackle = 10
+        self.hydroblast = 35
+        self.razorleaf = 30
+        self.flamethrower = 30
+        self.hyperbeam = 20
+        self.RIP1 = False
+        self.RIP2 = False
+        self.HP1Color = (0,0,0)
+        self.HP2Color = (0,0,0)
+        #HP Text postions
+        self.healthP1TextX = 5
+        self.healthP1TextY = 225
+        self.healthP2TextX = 475
+        self.healthP2TextY = 30
+
         #step 3/4 start game loop and tick regulate (with LoopingCall)
         def game_tick():
 
@@ -221,8 +246,17 @@ class GameSpace:
                             # print "POS: " + str(pos)
                             self.inFight = 1
                             self.fact.playerConn.transport.write("special")
-                                                        
-                            
+
+                            if self.player1.specialMove == "Hydroblast":
+                                self.healthP2 = self.healthP2 - self.hydroblast
+                            elif self.player1.specialMove == "Razor Leaf":
+                                self.healthP2 = self.healthP2 - self.razorleaf
+                            elif self.player1.specialMove == "Flamethrower":
+                                self.healthP2 = self.healthP2 - self.flamethrower
+                            else:
+                                self.healthP2 = self.healthP2 - self.hyperbeam
+
+
                         if pos[1] >= 330 and pos[1] < 370:
                             self.tackleColor = (0,0,0)
                             self.specialColor = (0,0,0)
@@ -234,15 +268,23 @@ class GameSpace:
                     self.tackleColor = (0,0,0)
                     self.specialColor = (0,0,0)
                     self.runColor = (0,0,0)
-                
-            #print self.inFight    
+
+            #print self.inFight
             if self.fact.playerConn.inp == "special":
                 self.inFight = 2
                 self.resetInp()
+                if self.player2.specialMove == "Hydroblast":
+                    self.healthP1 = self.healthP1 - self.hydroblast
+                elif self.player2.specialMove == "Razor Leaf":
+                    self.healthP1 = self.healthP1 - self.razorleaf
+                elif self.player2.specialMove == "Flamethrower":
+                    self.healthP1 = self.healthP1 - self.flamethrower
+                else:
+                    self.healthP1 = self.healthP1 - self.hyperbeam
                 #elf.fact.playerConn.inp == ""
 
             #print self.fact.playerConn.inp
-                    
+
             keys = pygame.key.get_pressed()
 
             if keys[K_DOWN]:
@@ -255,7 +297,7 @@ class GameSpace:
                 self.player1.speed[0] = -10
 
 
-            if self.inFight != 0:          
+            if self.inFight != 0:
                 if self.players[self.inFight-1].specialMove == "Hydroblast":
                     self.stream.enter(Hydroblast(self, self.inFight))
                 elif self.players[self.inFight-1].specialMove == "Razor Leaf":
@@ -264,7 +306,25 @@ class GameSpace:
                     self.stream.enter(FlameThrower(self, self.inFight))
                 else:
                     self.stream.enter(Hyperbeam(self, self.inFight))
-                
+
+
+            if self.healthP1 <= 0:
+                self.RIP1 = True
+                self.player1.Death(self.RIP1)
+                self.HP1Color = (255,0,0)
+                self.healthP1 = str(self.healthP1)
+                self.healthP1 = "DEFEATED"
+                self.healthP1TextX = 25
+                self.healthP1TextY = 245
+            if self.healthP2 <= 0:
+                self.RIP2 = True
+                self.player2.Death(self.RIP2)
+                self.HP2Color = (255,0,0)
+                self.healthP2 = str(self.healthP2)
+                self.healthP2 = "DEFEATED"
+                self.healthP2TextX = 390
+                self.healthP2TextY = 5
+
             self.player1.move()
             self.player1.speed = [0,0]
             self.player2.move()
@@ -277,7 +337,7 @@ class GameSpace:
             self.player2.tick()
             self.optionBox.tick()
             self.stream.tick()
-            
+
             #step 7: update the screen
             self.screen.fill(self.black)
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
@@ -286,18 +346,18 @@ class GameSpace:
                 self.screen.blit(self.player2.pokemon, self.player2.rect)
                 self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
-        
+
             for item in self.stream.items:
                 self.screen.blit(item.image, item.rect)
 
             self.screen.blit(self.player1.pokemon, self.player1.rect)
-                
+
             self.optionBox.writeText(30, "TACKLE", 375, 250,self.tackleColor)
             self.optionBox.writeText(30, "SPECIAL", 375, 290,self.specialColor)
             self.optionBox.writeText(30, "RUN", 375, 330,self.runColor)
 
-            self.player1.writeText(35, "HP: " + str(self.healthP1), 5, 225,(0,0,0))
-            self.player2.writeText(35, "HP: " + str(self.healthP2), 475, 30,(0,0,0))
+            self.player1.writeText(30, "HP: " + str(self.healthP1), self.healthP1TextX, self.healthP1TextY,self.HP1Color)
+            self.player2.writeText(30, "HP: " + str(self.healthP2), self.healthP2TextX, self.healthP2TextY, self.HP2Color)
 
             #if self.showMove == 1:
             #    pass
@@ -313,7 +373,7 @@ class GameSpace:
     def resetInp(self):
         self.fact.playerConn.inp = ""
 
-        
+
 #later as part of step 1
 if __name__=='__main__':
     log.startLogging(sys.stdout)
