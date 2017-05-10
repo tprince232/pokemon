@@ -286,10 +286,12 @@ class GameSpace:
                 self.screen.blit(self.player2.pokemon, self.player2.rect)
                 self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
-            self.screen.blit(self.player1.pokemon, self.player1.rect)
+        
             for item in self.stream.items:
                 self.screen.blit(item.image, item.rect)
 
+            self.screen.blit(self.player1.pokemon, self.player1.rect)
+                
             self.optionBox.writeText(30, "TACKLE", 375, 250,self.tackleColor)
             self.optionBox.writeText(30, "SPECIAL", 375, 290,self.specialColor)
             self.optionBox.writeText(30, "RUN", 375, 330,self.runColor)
