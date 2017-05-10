@@ -151,7 +151,7 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        port = 40321
+        port = 40350
         if pNum == 1:
             self.fact = PlayerFactory(pNum, poke)
             reactor.listenTCP(port, self.fact)
@@ -235,11 +235,13 @@ class GameSpace:
                     self.specialColor = (0,0,0)
                     self.runColor = (0,0,0)
                 
-            print self.inFight    
+            #print self.inFight    
             if self.fact.playerConn.inp == "special":
                 self.inFight = 2
                 self.resetInp()
-            
+                #elf.fact.playerConn.inp == ""
+
+            #print self.fact.playerConn.inp
                     
             keys = pygame.key.get_pressed()
 
@@ -307,7 +309,7 @@ class GameSpace:
         reactor.run()
 
     def resetInp(self):
-        self.fact.playerConn.inp == ""
+        self.fact.playerConn.inp = ""
 
         
 #later as part of step 1
