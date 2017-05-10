@@ -62,10 +62,7 @@ class Player2(pygame.sprite.Sprite):
         self.speed = [0,0]
         self.rect = self.rect.move(425,45)
         self.rectTrainer = self.rectTrainer.move(365,40)
-        self.isTackling = 0
-        self.Ox = self.rect.x
-        self.Oy = self.rect.y
-        
+
         if playerPoke == "Charmander":
             self.specialMove = "Flamethrower"
             self.damage = 35
@@ -80,28 +77,18 @@ class Player2(pygame.sprite.Sprite):
             self.damage = 20
 
     def move(self):
-        #self.rect.move_ip(self.speed)
-        self.rect.x = self.rect.x - 23
-        if self.rect.x > 300:
-            self.rect.y = self.rect.y - 10
-        else:
-            self.rect.y = self.rect.y + 15
-            
-        if self.rect.x < 20:
-            self.isTackling = 0
-            self.rect.x = self.Ox
-            self.rect.y = self.Oy
-            
+        self.rect.move_ip(self.speed)
+
+
+
     def tick(self):
-        if self.isTackling == 1:
-            self.move()
-  
-  
+        if self.action == "tackle":
+            pass
 
     def Death(self, isDead):
         if isDead == True:
             self.pokemon = pygame.image.load("./pokeDex/" + "tombstone" + ".png")
-            self.rect = self.rect.move(440,55)
+            # self.rect = self.rect.move(420,45)
 
     def writeText(self, size, text, w, h, color):
 #Create OptionBox FONT (fight)
@@ -117,7 +104,7 @@ class Player1(pygame.sprite.Sprite):
     def __init__(self, GameSpace, playerNum, playerPoke):
         pygame.sprite.Sprite.__init__(self)
         self.gamespace = GameSpace
-        self.isTackling = 0
+
         #GENERATE POKEMON
         if playerNum == 1:
             self.pokemon = pygame.image.load("./pokeDex/" + playerPoke + "back.png")
@@ -132,9 +119,7 @@ class Player1(pygame.sprite.Sprite):
         self.rect = self.pokemon.get_rect()
         self.speed = [0,0]
         self.rect = self.rect.move(20,150)
-        self.Ox = self.rect.x
-        self.Oy = self.rect.y
-        
+
         if playerPoke == "Charmander":
             self.specialMove = "Flamethrower"
             self.damage = 35
@@ -149,21 +134,10 @@ class Player1(pygame.sprite.Sprite):
             self.damage = 20
 
     def move(self):
-        #self.rect.move_ip(self.speed)
-        self.rect.x = self.rect.x + 20
-        if self.rect.x < 300:
-            self.rect.y = self.rect.y - 15
-        else:
-            self.rect.y = self.rect.y + 10
+        self.rect.move_ip(self.speed)
 
-        if self.rect.x > 380:
-            self.isTackling = 0
-            self.rect.x = self.Ox
-            self.rect.y = self.Oy
-            
     def tick(self):
-        if self.isTackling == 1:
-            self.move()
+        pass
 
     def Death(self, isDead):
         if isDead == True:
@@ -187,7 +161,7 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.display.set_caption('Pokemon Game')
 
-        port = 40321
+        port = 40022
         if pNum == 1:
             self.fact = PlayerFactory(pNum, poke)
             reactor.listenTCP(port, self.fact)
@@ -258,19 +232,17 @@ class GameSpace:
                             self.specialColor = (0,0,0)
                             self.runColor = (0,0,0)
                             print "TACKLE clicked"
-                            print "POS: " + str(pos)
-                            self.player1.isTackling = 1
-                            self.fact.playerConn.transport.write("tackle")
-                            
+                            # print "POS: " + str(pos)
+
                         if pos[1] >= 290 and pos[1] < 330:
                             self.tackleColor = (0,0,0)
                             self.specialColor = (255,0,0)
                             self.runColor = (0,0,0)
                             print "SPECIAL clicked"
-                            print self.player1.specialMove
-                            print "Damage: " + str(self.player1.damage)
-                            print self.player2.specialMove
-                            print "Damage: " + str(self.player2.damage)
+                            # print self.player1.specialMove
+                            # print "Damage: " + str(self.player1.damage)
+                            # print self.player2.specialMove
+                            # print "Damage: " + str(self.player2.damage)
                             # print "POS: " + str(pos)
                             self.inFight = 1
                             self.fact.playerConn.transport.write("special")
@@ -309,10 +281,20 @@ class GameSpace:
                     self.healthP1 = self.healthP1 - self.flamethrower
                 else:
                     self.healthP1 = self.healthP1 - self.hyperbeam
+                #elf.fact.playerConn.inp == ""
 
-            elif self.fact.playerConn.inp == "tackle":
-                self.player2.isTackling = 1
-                self.resetInp()
+            #print self.fact.playerConn.inp
+
+            keys = pygame.key.get_pressed()
+
+            if keys[K_DOWN]:
+                self.player1.speed[1] = 10
+            if keys[K_UP]:
+                self.player1.speed[1] = -10
+            if keys[K_RIGHT]:
+                self.player1.speed[0] = 10
+            if keys[K_LEFT]:
+                self.player1.speed[0] = -10
 
 
             if self.inFight != 0:
@@ -324,7 +306,8 @@ class GameSpace:
                     self.stream.enter(FlameThrower(self, self.inFight))
                 else:
                     self.stream.enter(Hyperbeam(self, self.inFight))
-                
+
+
             if self.healthP1 <= 0:
                 self.RIP1 = True
                 self.player1.Death(self.RIP1)
@@ -342,8 +325,14 @@ class GameSpace:
                 self.healthP2TextX = 390
                 self.healthP2TextY = 5
 
+            self.player1.move()
+            self.player1.speed = [0,0]
+            self.player2.move()
+            self.player2.speed = [0,0]
 
-            #step 6: for every sprite/game object, call tick()
+#step 6: for every sprite/game object, call tick()
+
+
             self.player1.tick()
             self.player2.tick()
             self.optionBox.tick()
@@ -354,8 +343,8 @@ class GameSpace:
             self.screen.blit(self.optionBox.grass, self.optionBox.rectGrass)
             self.screen.blit(self.optionBox.scene, self.optionBox.rectScene)
             if self.player2isInit == 1:
-                self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
                 self.screen.blit(self.player2.pokemon, self.player2.rect)
+                self.screen.blit(self.player2.trainer, self.player2.rectTrainer)
             self.screen.blit(self.optionBox.box, self.optionBox.rect)
 
             for item in self.stream.items:
@@ -369,6 +358,10 @@ class GameSpace:
 
             self.player1.writeText(30, "HP: " + str(self.healthP1), self.healthP1TextX, self.healthP1TextY,self.HP1Color)
             self.player2.writeText(30, "HP: " + str(self.healthP2), self.healthP2TextX, self.healthP2TextY, self.HP2Color)
+
+            #if self.showMove == 1:
+            #    pass
+                # self.optionBox.writeText(40,str(self.player1.specialMove) , 75, 75)
 
             pygame.display.flip()
 
